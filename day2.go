@@ -67,23 +67,38 @@ func NewGame(gameText string) *Game {
 }
 
 func (g *Game) ValidGame() bool {
-	var redTotal int
-	var greenTotal int
-	var blueTotal int
-
 	for _, set := range g.Sets {
-		redTotal += set.Red
-		greenTotal += set.Green
-		blueTotal += set.Blue
-	}
-	if blueTotal > blueMax {
-		return false
-	} else if greenTotal > greenMax {
-		return false
-	} else if redTotal > redMax {
-		return false
+		if set.Blue > blueMax {
+			return false
+		} else if set.Green > greenMax {
+			return false
+		} else if set.Red > redMax {
+			return false
+		}
 	}
 	return true
+}
+
+func (g *Game) MinimumSet() *Set {
+	red := 0
+	green := 0
+	blue := 0
+	for _, set := range g.Sets {
+		if set.Blue > blue {
+			blue = set.Blue
+		}
+		if set.Green > green {
+			green = set.Green
+		}
+		if set.Red > red {
+			red = set.Red
+		}
+	}
+	return &Set{
+		Red:   red,
+		Blue:  blue,
+		Green: green,
+	}
 }
 
 func dayTwoPartOne() {
@@ -98,4 +113,14 @@ func dayTwoPartOne() {
 	}
 	fmt.Println(gameSum)
 }
-func dayTwoPartTwo() {}
+func dayTwoPartTwo() {
+	lines := loadLines(2)
+	powerSum := 0
+	for _, line := range lines {
+		game := NewGame(line)
+		set := game.MinimumSet()
+		power := set.Green * set.Red * set.Blue
+		powerSum += power
+	}
+	fmt.Println(powerSum)
+}
